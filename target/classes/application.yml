@@ -1,0 +1,23 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: reggie_take_out
+  datasource:
+    name: druid
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/ruiji
+      username: root
+      password: 123456789
+
+
+
+mybatis-plus:
+  configuration:
+    #???????????????????????????????????????
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: ASSIGN_ID
