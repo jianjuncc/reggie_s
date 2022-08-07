@@ -21,7 +21,11 @@ public class Employee {
     private String phone;
     private String sex;
 
-    private String idNumber;//身份证号码
+    /***
+     *     身份证号码
+     */
+    private String idNumber;
+
 
     private Integer status;
 
