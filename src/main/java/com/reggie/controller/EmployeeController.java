@@ -5,10 +5,10 @@ import com.reggie.common.R;
 import com.reggie.entity.Employee;
 import com.reggie.service.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 
@@ -21,8 +21,10 @@ import java.time.LocalDateTime;
 @RequestMapping(value = "/employee", method = RequestMethod.POST)
 public class EmployeeController {
 
-    @Resource
+    @Autowired
     EmployeeService service;
+
+     Long empId;
 
     /***
      * 员工登录
@@ -55,27 +57,29 @@ public class EmployeeController {
 
         //登陆成功，将员工id存入session并返回登录成功结果
         httpRequest.getSession().setAttribute("employee", emp.getId());
+        empId = emp.getId();
         return R.success(emp);
     }
 
     @PostMapping(value = "/logout")
-    public R logout(HttpServletRequest request) {
+    public R<String> logout(HttpServletRequest request) {
         //移除session中的id属性
         request.getSession().removeAttribute("employee");
         return R.success("退出");
     }
 
     @PostMapping
-    public R<String> save(HttpServletRequest httpRequest, @RequestBody Employee employee) {
+    public R<String> save(HttpServletRequest request, @RequestBody Employee employee) {
         log.info("员工属性{}", employee);
         // 第一步设置初始密码 123456 使用MD5加密
-        employee.setPassword("123456");
-        DigestUtils.md5DigestAsHex(employee.getPassword().getBytes());
+        employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
         // 第二步设置创建和更新时间
         employee.setCreateTime(LocalDateTime.now());
         employee.setUpdateTime(LocalDateTime.now());
-        // 第三步设置创建人和和更新人
-        Long empId = (Long) httpRequest.getSession().getAttribute("employee");
+        // 第三步设置创建人和和更新人.
+        Long empId = (Long) request.getSession().getAttribute("employee");
+
+        System.out.println(empId);
         employee.setCreateUser(empId);
         employee.setUpdateUser(empId);
 

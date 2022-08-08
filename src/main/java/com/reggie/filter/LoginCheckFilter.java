@@ -35,20 +35,24 @@ public class LoginCheckFilter implements Filter {
 
         // 3、如果不需要处理，则直接放行
         if (check) {
-            log.info("不需要处理");
-            filterChain.doFilter(request,response);
+            log.info("本次请求{}不需要处理", requestURL);
+            filterChain.doFilter(request, response);
             return;
         }
         // 4、判断登录状态，如果已经登录，则直接放行
-         if (request.getSession().getAttribute("employee") != null){
-             log.info("已经登录获取用户id"+request.getSession().getAttribute("employee"));
-             filterChain.doFilter(request,response);
-             return;
-         }
+        Object employee = request.getSession().getAttribute("employee");
+        if (employee != null) {
+            long id = Thread.currentThread().getId();
+            log.info("当前线程的id为{}",id);
+            log.info("已经登录获取用户id" + employee);
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         log.info("登陆失败");
-         // 5、如果未登录则返回未登录结果
-        response.getWriter().write(JSON.toJSONString(R.error("登录失败")));
+        // 5、如果未登录则返回未登录结果
+        response.getWriter().write(JSON.toJSONString(R.error("NOTLOGIN")));
+        log.info("拦截请求:{}", request.getRequestURI());
     }
 
     /***
