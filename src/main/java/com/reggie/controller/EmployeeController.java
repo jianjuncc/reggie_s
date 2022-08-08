@@ -1,6 +1,8 @@
 package com.reggie.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.reggie.common.R;
 import com.reggie.entity.Employee;
 import com.reggie.service.EmployeeService;
@@ -14,6 +16,7 @@ import java.time.LocalDateTime;
 
 /**
  * 员工相关操作
+ *
  * @author shu
  */
 @RestController
@@ -24,7 +27,7 @@ public class EmployeeController {
     @Autowired
     EmployeeService service;
 
-     Long empId;
+    Long empId;
 
     /***
      * 员工登录
@@ -86,5 +89,23 @@ public class EmployeeController {
         //第四步保存信息
         service.save(employee);
         return R.success("保存员工信息成功");
+    }
+
+    @GetMapping("/page")
+    public R<Page> page(int page, int pageSize, String name) {
+        log.info("page:{},pageSize:{},name:{}",page,pageSize,name);
+        //构造分页构造器
+        Page pageInfo = new Page(page,pageSize);
+        //构造条件构造器
+        LambdaQueryWrapper<Employee > lambdaQueryWrapper = new LambdaQueryWrapper<>();
+
+        //添加过滤条件
+        lambdaQueryWrapper.like(StringUtils.isNotEmpty(name),Employee::getName, name);
+
+        //添加排序条件
+        lambdaQueryWrapper.orderByAsc(Employee::getUpdateTime);
+        //执行查询
+        service.page(pageInfo, lambdaQueryWrapper);
+        return R.success(pageInfo);
     }
 }
