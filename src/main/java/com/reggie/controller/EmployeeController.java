@@ -5,13 +5,16 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.reggie.common.R;
 import com.reggie.entity.Employee;
-import com.reggie.service.EmployeeService;
+import com.reggie.service.impl.EmployeeServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 /**
@@ -21,19 +24,17 @@ import java.time.LocalDateTime;
  */
 @RestController
 @Slf4j
-@RequestMapping(value = "/employee", method = RequestMethod.POST)
+@RequestMapping(value = "/employee")
 public class EmployeeController {
 
     @Autowired
-    EmployeeService service;
-
-    Long empId;
+    EmployeeServiceImpl  service;
 
     /***
      * 员工登录
      */
     @PostMapping(value = "/login")
-    public R<Employee> login(HttpServletRequest httpRequest, @RequestBody Employee employee) {
+    public R<Employee> login(Model model, HttpServletRequest httpRequest, @RequestBody Employee employee) {
         //1、将页面提交的密码password进行加密处理
         String password = employee.getPassword();
         password = DigestUtils.md5DigestAsHex(password.getBytes());
@@ -59,8 +60,9 @@ public class EmployeeController {
         }
 
         //登陆成功，将员工id存入session并返回登录成功结果
+        model.addAttribute("employee",emp.getId());
         httpRequest.getSession().setAttribute("employee", emp.getId());
-        empId = emp.getId();
+        httpRequest.getServletContext().setAttribute("employee", emp.getId());
         return R.success(emp);
     }
 
@@ -71,7 +73,7 @@ public class EmployeeController {
         return R.success("退出");
     }
 
-    @PostMapping
+    @PostMapping("/addEmployee")
     public R<String> save(HttpServletRequest request, @RequestBody Employee employee) {
         log.info("员工属性{}", employee);
         // 第一步设置初始密码 123456 使用MD5加密
@@ -107,5 +109,15 @@ public class EmployeeController {
         //执行查询
         service.page(pageInfo, lambdaQueryWrapper);
         return R.success(pageInfo);
+    }
+
+    @PutMapping("/enable")
+    public R<String> update(HttpServletResponse response, HttpServletRequest request, @RequestBody Employee employee) throws IOException {
+        log.info(employee.toString());
+        Long empId = (Long) request.getSession().getAttribute("employee");
+        employee.setUpdateUser(empId);
+        employee.setUpdateTime(LocalDateTime.now());
+        service.updateById(employee);
+        return R.success("权限运行成功");
     }
 }
