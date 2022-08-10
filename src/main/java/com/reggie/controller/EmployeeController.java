@@ -92,7 +92,7 @@ public class EmployeeController {
         //添加过滤条件
         lambdaQueryWrapper.like(!StringUtils.isEmpty(name),Employee::getName, name);
         //添加排序条件
-        lambdaQueryWrapper.orderByDesc(Employee::getCreateTime);
+        lambdaQueryWrapper.orderByAsc(Employee::getCreateTime);
         //执行查询
         service.page(pageInfo,lambdaQueryWrapper);
         return R.success(pageInfo);
