@@ -26,7 +26,7 @@ import java.io.IOException;
 public class EmployeeController {
 
     @Autowired
-    EmployeeServiceImpl  service;
+    EmployeeServiceImpl service;
 
     /***
      * 员工登录
@@ -58,7 +58,7 @@ public class EmployeeController {
         }
 
         //登陆成功，将员工id存入session并返回登录成功结果
-        model.addAttribute("employee",emp.getId());
+        model.addAttribute("employee", emp.getId());
         httpRequest.getSession().setAttribute("employee", emp.getId());
         httpRequest.getServletContext().setAttribute("employee", emp.getId());
 
@@ -84,15 +84,15 @@ public class EmployeeController {
 
     @GetMapping("/page")
     public R<Page<Employee>> page(int page, int pageSize, String name) {
-        log.info("page:{},pageSize:{},name:{}",page,pageSize,name);
+        log.info("page:{},pageSize:{},name:{}", page, pageSize, name);
         //构造分页构造器
-        Page pageInfo = new Page(page,pageSize);
+        Page pageInfo = new Page(page, pageSize);
         //构造条件构造器
-        LambdaQueryWrapper<Employee> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        LambdaQueryWrapper<Employee> lambdaQueryWrapper = new LambdaQueryWrapper();
         //添加过滤条件
-        lambdaQueryWrapper.like(!StringUtils.isEmpty(name),Employee::getName,name);
+        lambdaQueryWrapper.like(!StringUtils.isEmpty(name),Employee::getName, name);
         //添加排序条件
-        lambdaQueryWrapper.orderByDesc(Employee::getUpdateTime);
+        lambdaQueryWrapper.orderByDesc(Employee::getCreateTime);
         //执行查询
         service.page(pageInfo,lambdaQueryWrapper);
         return R.success(pageInfo);
@@ -106,7 +106,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}")
-    public R<Employee> getById(@PathVariable Long id){
+    public R<Employee> getById(@PathVariable Long id) {
         log.info("查询员工信息");
         Employee employee = service.getById(id);
         return R.success(employee);
