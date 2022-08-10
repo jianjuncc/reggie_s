@@ -8,6 +8,10 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
+/**
+ * web配置类
+ * @author shu
+ */
 @Slf4j
 @Configuration
 public class WebMvcConfig extends WebMvcConfigurationSupport {
@@ -21,6 +25,9 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
                 "/employee/logout",
                 //html静态资源
                 "/**/*.html",
+                "/backend/images/**",
+                "/backend/plugins/**",
+                "/backend/styles/**",
                 //js静态资源
                 "/**/*.js",
                 //css静态资源
@@ -30,10 +37,7 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
     }
     /***
      * 配置资源映射
-     * @param registry
      */
-
-
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
         log.info("静态资源开始加载");

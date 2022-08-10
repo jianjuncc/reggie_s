@@ -73,7 +73,7 @@ public class EmployeeController {
         return R.success("退出");
     }
 
-    @PostMapping("/addEmployee")
+    @PostMapping("/add")
     public R<String> save(HttpServletRequest request, @RequestBody Employee employee) {
         log.info("员工属性{}", employee);
         // 第一步设置初始密码 123456 使用MD5加密
@@ -97,21 +97,19 @@ public class EmployeeController {
     public R<Page<Employee>> page(int page, int pageSize, String name) {
         log.info("page:{},pageSize:{},name:{}",page,pageSize,name);
         //构造分页构造器
-        Page<Employee> pageInfo = new Page<>(page,pageSize);
+        Page<Employee> pageInfo = new Page<>();
         //构造条件构造器
-        LambdaQueryWrapper<Employee > lambdaQueryWrapper = new LambdaQueryWrapper<>();
-
+        LambdaQueryWrapper<Employee> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         //添加过滤条件
-        lambdaQueryWrapper.like(StringUtils.isNotEmpty(name),Employee::getName, name);
-
+        lambdaQueryWrapper.like(StringUtils.isNotEmpty(name),Employee::getName,name);
         //添加排序条件
         lambdaQueryWrapper.orderByAsc(Employee::getUpdateTime);
         //执行查询
-        service.page(pageInfo, lambdaQueryWrapper);
+        service.page(pageInfo,lambdaQueryWrapper);
         return R.success(pageInfo);
     }
 
-    @PutMapping("/enable")
+    @PutMapping
     public R<String> update(HttpServletResponse response, HttpServletRequest request, @RequestBody Employee employee) throws IOException {
         log.info(employee.toString());
         Long empId = (Long) request.getSession().getAttribute("employee");
@@ -120,4 +118,12 @@ public class EmployeeController {
         service.updateById(employee);
         return R.success("权限运行成功");
     }
+
+    @GetMapping("/{id}")
+    public R<Employee> getById(@PathVariable Long id){
+        log.info("查询员工信息");
+        Employee employee = service.getById(id);
+        return R.success(employee);
+    }
+
 }
