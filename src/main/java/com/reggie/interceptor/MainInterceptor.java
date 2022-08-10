@@ -1,5 +1,6 @@
 package com.reggie.interceptor;
 
+import com.reggie.common.R;
 import lombok.val;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
@@ -24,10 +25,11 @@ public class MainInterceptor implements HandlerInterceptor {
            if (empId != null) {
                return true;
            }
-           response.sendRedirect(request.getContextPath() + "login");
+           R.error("未知错误");
        } catch (Exception e) {
            throw new RuntimeException(e);
        }
+
        return false;
    }
 
