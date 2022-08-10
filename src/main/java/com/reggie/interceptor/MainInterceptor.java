@@ -1,6 +1,8 @@
 package com.reggie.interceptor;
 
+import com.reggie.common.BaseContext;
 import com.reggie.common.R;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
@@ -15,6 +17,7 @@ import javax.servlet.http.HttpSession;
  * @author shu
  */
 @Component
+@Slf4j
 public class MainInterceptor implements HandlerInterceptor {
    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
        System.out.println("1");
@@ -22,6 +25,7 @@ public class MainInterceptor implements HandlerInterceptor {
        try {
            HttpSession session = request.getSession();
            Long empId = (Long) session.getAttribute("employee");
+           BaseContext.setThreadLocal(empId);
            if (empId != null) {
                return true;
            }

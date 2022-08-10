@@ -13,9 +13,7 @@ import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 /**
  * 员工相关操作
@@ -63,6 +61,7 @@ public class EmployeeController {
         model.addAttribute("employee",emp.getId());
         httpRequest.getSession().setAttribute("employee", emp.getId());
         httpRequest.getServletContext().setAttribute("employee", emp.getId());
+
         return R.success(emp);
     }
 
@@ -74,7 +73,7 @@ public class EmployeeController {
     }
 
     @PostMapping("/add")
-    public R<String> save(HttpServletRequest request, @RequestBody Employee employee) {
+    public R<String> save(@RequestBody Employee employee) {
         log.info("员工属性{}", employee);
         // 第一步设置初始密码 123456 使用MD5加密
         employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
@@ -87,24 +86,21 @@ public class EmployeeController {
     public R<Page<Employee>> page(int page, int pageSize, String name) {
         log.info("page:{},pageSize:{},name:{}",page,pageSize,name);
         //构造分页构造器
-        Page<Employee> pageInfo = new Page<>();
+        Page pageInfo = new Page(page,pageSize);
         //构造条件构造器
         LambdaQueryWrapper<Employee> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         //添加过滤条件
-        lambdaQueryWrapper.like(StringUtils.isNotEmpty(name),Employee::getName,name);
+        lambdaQueryWrapper.like(!StringUtils.isEmpty(name),Employee::getName,name);
         //添加排序条件
-        lambdaQueryWrapper.orderByAsc(Employee::getUpdateTime);
+        lambdaQueryWrapper.orderByDesc(Employee::getUpdateTime);
         //执行查询
         service.page(pageInfo,lambdaQueryWrapper);
         return R.success(pageInfo);
     }
 
     @PutMapping
-    public R<String> update(HttpServletResponse response, HttpServletRequest request, @RequestBody Employee employee) throws IOException {
+    public R<String> update(@RequestBody Employee employee) throws IOException {
         log.info(employee.toString());
-        Long empId = (Long) request.getSession().getAttribute("employee");
-        employee.setUpdateUser(empId);
-        employee.setUpdateTime(LocalDateTime.now());
         service.updateById(employee);
         return R.success("权限运行成功");
     }
