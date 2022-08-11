@@ -1,9 +1,11 @@
 package com.reggie.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -15,6 +17,7 @@ public class Category implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long id;
 
 
@@ -49,9 +52,5 @@ public class Category implements Serializable {
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Long updateUser;
 
-
-    //是否删除
-    @TableLogic
-    private Integer isDeleted;
 
 }
