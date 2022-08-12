@@ -10,4 +10,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public interface CategoryService extends IService<Category> {
+    public void remove(long ids,int type);
+
 }

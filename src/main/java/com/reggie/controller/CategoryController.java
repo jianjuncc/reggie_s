@@ -21,10 +21,8 @@ import javax.annotation.Resource;
 @Slf4j
 public class CategoryController {
     @Resource
-    CategoryService service;
+    CategoryServiceImpl service;
 
-    @Autowired
-    CategoryServiceImpl categoryService;
     /***yy
      * 分页查询
      */
@@ -58,7 +56,14 @@ public class CategoryController {
     @DeleteMapping
     public R<String> delete(@RequestParam Long ids){
         log.info("id值{}",ids);
-        categoryService.removeById(ids);
+        Integer type = service.getById(ids).getType();
+        service.remove(ids, type);
         return R.success("删除成功");
+    }
+    @PutMapping
+    public R<String> update(@RequestBody Category category){
+        log.info(category.getName());
+        service.updateById(category);
+        return R.success("更新成功");
     }
 }

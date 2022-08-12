@@ -12,17 +12,24 @@ import java.sql.SQLIntegrityConstraintViolationException;
 
 /**
  * 全局异常处理
+ *
  * @author shu
  */
 @RestControllerAdvice(annotations = {RestController.class, Controller.class})
 @Slf4j
 public class GlobalExceptionHandler {
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
-    public R<String> exceptionHandler(SQLIntegrityConstraintViolationException ex){
+    public R<String> exceptionHandler(SQLIntegrityConstraintViolationException ex) {
         if (ex.getMessage().contains("Duplicate entry")) {
             String[] split = ex.getMessage().split(" ");
             return R.error(split + "用户名重复");
         }
         return R.error("未知错误");
+    }
+
+    @ExceptionHandler(CustomException.class)
+    public R<String> exceptionHandler(CustomException ex) {
+        log.info(ex.getMessage());
+        return R.error(ex.getMessage());
     }
 }
