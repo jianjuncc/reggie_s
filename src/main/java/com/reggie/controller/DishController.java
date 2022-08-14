@@ -7,10 +7,10 @@ import com.reggie.common.R;
 import com.reggie.entity.Dish;
 import com.reggie.service.DishService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 
 
 @RestController
@@ -37,12 +37,37 @@ public class DishController {
 
     @PostMapping("/status/{status}")
     public R<String> status(@PathVariable int status, String[] ids){
-        log.info(ids.toString());
+        log.info(Arrays.toString(ids));
         for (String id :ids) {
+
             Dish dish = service.getById(id);
             dish.setStatus(status);
             service.updateById(dish);
         }
         return R.success("状态改变成功");
     }
+
+    @DeleteMapping
+    public R<String> delete(String[] ids){
+        log.info(ids[0]);
+
+        for (String id : ids) {
+            service.removeById(id);
+        }
+
+        return R.success("删除成功");
+    }
+
+    @GetMapping("/{id}")
+    public R<Dish> getById(@PathVariable Long id){
+        log.info(String.valueOf(id));
+        Dish byId = service.getById(id);
+        return R.success(byId);
+    }
+//    @GetMapping("/list")
+//    public R<Dish> list(@RequestBody Dish dish){
+//        log.info(dish.toString());
+//
+//        return R.success(byId);
+//    }
 }

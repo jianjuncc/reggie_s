@@ -8,6 +8,9 @@ class ReggieApplicationTests {
 
     @Test
     void contextLoads() {
+        String originalFilename = "arg.jpg";
+        String suffix = originalFilename.substring(originalFilename.lastIndexOf("."));
+        System.out.println(suffix);
     }
 
 }
