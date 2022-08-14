@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.reggie.common.R;
+import com.reggie.dto.DishDto;
 import com.reggie.entity.Dish;
 import com.reggie.service.DishService;
 import lombok.extern.slf4j.Slf4j;
@@ -19,55 +20,47 @@ import java.util.Arrays;
 public class DishController {
     @Resource
     DishService service;
+
     @GetMapping("/page")
-    public R<Page> page(int page,int pageSize, String name){
-        log.info("page:{},pageSize:{}, String:{}",page,pageSize,name);
+    public R<Page> page(int page, int pageSize, String name) {
+        log.info("page:{},pageSize:{}, String:{}", page, pageSize, name);
         //分页构造器
-        Page pageInfo = new Page(page,pageSize);
+        Page pageInfo = new Page(page, pageSize);
 
         //条件构造器
         LambdaQueryWrapper<Dish> lambdaQueryWrapper = new LambdaQueryWrapper();
-        lambdaQueryWrapper.like(StringUtils.isNotEmpty(name),Dish::getName, name);
+        lambdaQueryWrapper.like(StringUtils.isNotEmpty(name), Dish::getName, name);
         //排序时间
         lambdaQueryWrapper.orderByAsc(Dish::getUpdateTime);
         //将数据存放到页面
-        service.page(pageInfo,lambdaQueryWrapper);
+        service.page(pageInfo, lambdaQueryWrapper);
         return R.success(pageInfo);
     }
 
-    @PostMapping("/status/{status}")
-    public R<String> status(@PathVariable int status, String[] ids){
-        log.info(Arrays.toString(ids));
-        for (String id :ids) {
+    @PostMapping("/status/{type}")
+    public R<String> status(@PathVariable int type, String[] ids){
+        log.info(ids[0]);
+        log.info("type{}",type);
 
-            Dish dish = service.getById(id);
-            dish.setStatus(status);
+        for (String s : ids) {
+            Dish dish = service.getById(s);
+            dish.setStatus(type);
             service.updateById(dish);
         }
-        return R.success("状态改变成功");
-    }
 
+        return R.success("更改状态成功");
+    }
     @DeleteMapping
     public R<String> delete(String[] ids){
-        log.info(ids[0]);
-
-        for (String id : ids) {
-            service.removeById(id);
+        for (String s : ids) {
+            service.removeById(s);
         }
-
         return R.success("删除成功");
     }
-
-    @GetMapping("/{id}")
-    public R<Dish> getById(@PathVariable Long id){
-        log.info(String.valueOf(id));
-        Dish byId = service.getById(id);
-        return R.success(byId);
+    @PostMapping
+    public R<String> save(@RequestBody DishDto dishDto){
+        log.info(dishDto.toString());
+        service.saveWithFlavor(dishDto);
+        return R.success("添加成功");
     }
-//    @GetMapping("/list")
-//    public R<Dish> list(@RequestBody Dish dish){
-//        log.info(dish.toString());
-//
-//        return R.success(byId);
-//    }
 }

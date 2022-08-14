@@ -4,13 +4,12 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.reggie.common.R;
 import com.reggie.entity.Category;
-import com.reggie.service.CategoryService;
 import com.reggie.service.impl.CategoryServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 菜品分类
@@ -20,7 +19,7 @@ import javax.annotation.Resource;
 @RequestMapping("/category")
 @Slf4j
 public class CategoryController {
-    @Resource
+    @Autowired(required = false)
     CategoryServiceImpl service;
 
     /***yy
@@ -65,5 +64,21 @@ public class CategoryController {
         log.info(category.getName());
         service.updateById(category);
         return R.success("更新成功");
+    }
+
+    /***
+     * 按值查询
+     * @param category
+     * @return
+     */
+    @GetMapping("/list")
+    public R<List<Category>> list(Category category){
+        //条件构造器
+        LambdaQueryWrapper<Category> lambdaQueryWrapper = new LambdaQueryWrapper();
+        lambdaQueryWrapper.eq(category.getType()!= null, Category::getType, category.getType());
+        //排序
+        lambdaQueryWrapper.orderByAsc(Category::getSort).orderByAsc(Category::getUpdateTime);
+        List<Category> list = service.list(lambdaQueryWrapper);
+        return R.success(list);
     }
 }
