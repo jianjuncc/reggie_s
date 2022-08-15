@@ -61,6 +61,7 @@ public class DishController {
     public R<String> save(@RequestBody DishDto dishDto){
         log.info(dishDto.toString());
         service.saveWithFlavor(dishDto);
+        System.out.println("ss");
         return R.success("添加成功");
     }
 }
