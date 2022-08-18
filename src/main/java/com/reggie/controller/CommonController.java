@@ -37,6 +37,8 @@ public class CommonController {
 
         //全新的文件名
         String newFile = filename + suffix;
+
+
         File file1 = new File(path);
         if (!file1.exists()) {
             file1.mkdirs();
@@ -60,7 +62,6 @@ public class CommonController {
                 outputStream.write(bytes,0,len);
                 outputStream.flush();
             }
-
             outputStream.close();
             inputStream.close();
         } catch (Exception e) {
