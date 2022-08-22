@@ -10,13 +10,10 @@ import com.reggie.service.SetmealDishService;
 import com.reggie.service.SetmealService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -33,50 +30,41 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
         //保存基本信息
         this.save(setmealDto);
         //保存菜品关联信息
-
-        List<SetmealDish> collect = setmealDto.getSetmealDishes().stream().peek(item -> {
-            // 设置套餐id
-            item.setSetmealId(setmealDto.getId());
-        }).collect(Collectors.toList());
-
-        setmealDishService.saveBatch(collect);
+        for (SetmealDish sto : setmealDto.getSetmealDishes()) {
+            sto.setSetmealId(setmealDto.getId());
+        }
+        setmealDishService.saveBatch(setmealDto.getSetmealDishes());
     }
 
     /***
      * 回显数据
      */
     @Override
-    @Transactional
     public SetmealDto getByIdWithSetmeal(Long id) {
-        //id查询
+        //获取普通信息
         Setmeal setmeal = this.getById(id);
-        //创建目标数据
         SetmealDto setmealDto = new SetmealDto();
-        BeanUtils.copyProperties(setmeal,setmealDto);
-
-        //复制dish信息
-        LambdaQueryWrapper<SetmealDish> lambdaQueryWrapper=new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(true, SetmealDish::getSetmealId, setmeal.getId());
+        BeanUtils.copyProperties(setmeal, setmealDto);
+        //获取菜品集合
+        LambdaQueryWrapper<SetmealDish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(SetmealDish::getSetmealId, setmealDto.getId());
         List<SetmealDish> list = setmealDishService.list(lambdaQueryWrapper);
         setmealDto.setSetmealDishes(list);
+
         return setmealDto;
     }
 
     @Override
     public void updateSetmeal(SetmealDto setmealDto) {
-        //更新数据
+        //更新基础信息
         this.updateById(setmealDto);
-        //更新数据
-        //删除原来数据
+        //更新菜品列表
+        //先删除原先的菜品列表
         LambdaQueryWrapper<SetmealDish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(SetmealDish::getDishId,setmealDto.getId());
+        lambdaQueryWrapper.eq(SetmealDish::getSetmealId, setmealDto.getId());
         setmealDishService.remove(lambdaQueryWrapper);
-
+        //在增加新的菜品
         setmealDto.getSetmealDishes().forEach(setmealDish -> setmealDish.setSetmealId(setmealDto.getId()));
-
-        //保存数据
         setmealDishService.updateBatchById(setmealDto.getSetmealDishes());
     }
-
-
 }
