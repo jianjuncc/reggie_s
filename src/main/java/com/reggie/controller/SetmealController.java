@@ -72,10 +72,10 @@ public class SetmealController {
     public R<String> delete(String[] ids){
         for (String id : ids) {
             Setmeal setmeal = setmealService.getById(id);
-            if (setmeal.getStatus() != 0) {
+            if (setmeal.getStatus() == 0) {
                 setmealService.removeById(id);
             }else {
-                throw new CustomException("状态不对");
+                throw new CustomException("状态不对，改套餐正在售卖");
             }
         }
         return R.success("删除成功");
