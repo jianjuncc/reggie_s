@@ -30,6 +30,8 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
                 "/backend/plugins/**",
                 "/backend/styles/**",
                 "/backend/page/demo/**",
+                "/front/page/login.html",
+                "/front/page/**.html",
                 //js静态资源
                 "/**/*.js",
                 //css静态资源
