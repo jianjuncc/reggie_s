@@ -6,13 +6,15 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.reggie.common.R;
 import com.reggie.dto.DishDto;
 import com.reggie.entity.Dish;
-import com.reggie.service.CategoryService;
 import com.reggie.service.DishService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 
 @RestController
@@ -23,7 +25,7 @@ public class DishController {
     DishService dishService;
 
     @Resource
-    CategoryService categoryService;
+    RedisTemplate<Object,Object> template;
     @GetMapping("/page")
     public R<Page<Dish>> page(int page, int pageSize, String name) {
         log.info("page:{},pageSize:{}, String:{}", page, pageSize, name);
@@ -64,7 +66,8 @@ public class DishController {
     public R<String> save(@RequestBody DishDto dishDto){
         log.info(dishDto.toString());
         dishService.saveWithFlavor(dishDto);
-        System.out.println("ss");
+        Set<Object> keys = template.keys("dish_*");
+        template.delete(keys);
         return R.success("添加成功");
     }
 
@@ -82,17 +85,26 @@ public class DishController {
     public R<String> update(@RequestBody DishDto dishDto){
         log.info(dishDto.toString());
         dishService.updateWithFlavor(dishDto);
-        return R.success("添加成功");
+        Set<Object> keys = template.keys("dish_*");
+        template.delete(keys);
+        return R.success("更新成功");
     }
 
     @GetMapping("/list")
     public R<List<Dish>> list(Dish dish){
+        //创造key
+        String key = "dish_"+dish.getCategoryId()+"_"+dish.getStatus();
+        List<Dish> list = (List<Dish>) template.opsForValue().get(key);
+        if (list != null) {
+            R.success(list);
+        }
         //条件构造器
         LambdaQueryWrapper<Dish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(dish.getCategoryId() != null, Dish::getCategoryId, dish.getCategoryId());
         lambdaQueryWrapper.eq(Dish::getStatus,1);
         lambdaQueryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
-        List<Dish> list = dishService.list(lambdaQueryWrapper);
+        list = dishService.list(lambdaQueryWrapper);
+        template.opsForValue().set(key,list,1, TimeUnit.HOURS);
         return R.success(list);
     }
 }
