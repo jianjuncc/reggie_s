@@ -7,11 +7,11 @@ import com.reggie.common.R;
 import com.reggie.entity.Employee;
 import com.reggie.service.impl.EmployeeServiceImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
@@ -25,7 +25,7 @@ import java.io.IOException;
 @RequestMapping(value = "/employee")
 public class EmployeeController {
 
-    @Autowired
+    @Resource
     EmployeeServiceImpl service;
 
     /***
@@ -86,9 +86,9 @@ public class EmployeeController {
     public R<Page<Employee>> page(int page, int pageSize, String name) {
         log.info("page:{},pageSize:{},name:{}", page, pageSize, name);
         //构造分页构造器
-        Page pageInfo = new Page(page, pageSize);
+        Page<Employee> pageInfo = new Page<>(page, pageSize);
         //构造条件构造器
-        LambdaQueryWrapper<Employee> lambdaQueryWrapper = new LambdaQueryWrapper();
+        LambdaQueryWrapper<Employee> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         //添加过滤条件
         lambdaQueryWrapper.like(!StringUtils.isEmpty(name),Employee::getName, name);
         //添加排序条件

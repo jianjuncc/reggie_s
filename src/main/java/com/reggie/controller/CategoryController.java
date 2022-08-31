@@ -6,9 +6,9 @@ import com.reggie.common.R;
 import com.reggie.entity.Category;
 import com.reggie.service.impl.CategoryServiceImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -20,19 +20,19 @@ import java.util.List;
 @RequestMapping("/category")
 @Slf4j
 public class CategoryController {
-    @Autowired(required = false)
+    @Resource
     CategoryServiceImpl service;
 
     /***yy
      * 分页查询
      */
     @GetMapping("/page")
-    public R<Page> page(int page, int pageSize) {
+    public R<Page<Category>> page(int page, int pageSize) {
         log.info("page:{},pageSize:{}", page, pageSize);
         //构建构造分页
-        Page pageInfo = new Page(page, pageSize);
+        Page<Category> pageInfo = new Page<>(page, pageSize);
         //条件构造器
-        LambdaQueryWrapper<Category> lambdaQueryWrapper = new LambdaQueryWrapper();
+        LambdaQueryWrapper<Category> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         //排序
         lambdaQueryWrapper.orderByAsc(Category::getSort);
         //存入查询
@@ -74,7 +74,7 @@ public class CategoryController {
     @GetMapping("/list")
     public R<List<Category>> list(Category category) {
         //条件构造器
-        LambdaQueryWrapper<Category> lambdaQueryWrapper = new LambdaQueryWrapper();
+        LambdaQueryWrapper<Category> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(category.getType() != null, Category::getType, category.getType());
         //排序
         lambdaQueryWrapper.orderByAsc(Category::getSort).orderByAsc(Category::getUpdateTime);
