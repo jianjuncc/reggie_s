@@ -23,7 +23,7 @@ public class CategoryController {
     @Resource
     CategoryServiceImpl service;
 
-    /***yy
+    /***
      * 分页查询
      */
     @GetMapping("/page")
@@ -61,6 +61,9 @@ public class CategoryController {
         return R.success("删除成功");
     }
 
+    /***
+     * 更新数据
+     */
     @PutMapping
     public R<String> update(@RequestBody Category category) {
         log.info(category.getName());

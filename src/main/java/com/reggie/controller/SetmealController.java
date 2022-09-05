@@ -75,7 +75,7 @@ public class SetmealController {
             if (setmeal.getStatus() == 0) {
                 setmealService.removeById(id);
             }else {
-                throw new CustomException("状态不对，改套餐正在售卖");
+                throw new CustomException("状态不对，套餐正在售卖");
             }
         }
         return R.success("删除成功");

@@ -24,6 +24,7 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
                 "/employee/login",
                 "/employee/logout",
                 "http://localhost:8080/backend/page/demo/upload.html",
+                "http://localhost:8080/front/page/login.html",
                 //html静态资源
                 "/**/*.html",
                 "/backend/images/**",

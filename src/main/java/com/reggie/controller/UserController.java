@@ -26,45 +26,43 @@ public class UserController {
 
     @PostMapping("/sendMsg")
     public R<String> sendMsg(@RequestBody User user, HttpSession session) {
-        //获取手机号
+        //手机号码
         String phone = user.getPhone();
-        //生成验证码
-        if (StringUtils.isNotEmpty(phone)) {
+        if (phone != null) {
+            //生成验证码
             String code = ValidateCodeUtils.generateValidateCode(4).toString();
-            log.info(code);
             //发送验证码
-            SMSUtils.sendMessage("瑞吉外卖", "", phone, code);
-            //session保存验证码
-            session.setAttribute(phone,code);
-            return R.success("手机验证码发送成功");
+            log.info(code);
+            SMSUtils.sendMessage("验证码短信","SMS_251115011",phone,code);
+            session.setAttribute(phone, code);
+            return R.success("验证码发送成功");
         }
+
         return R.error("验证码发送失败");
     }
 
 
     @PostMapping("/login")
-    public R<String> login(@RequestBody User user, HttpSession session, Map map) {
+    public R<String> login(@RequestBody Map map, HttpSession session) {
         //获取手机号
-        String phone = user.getPhone();
+        String phone = map.get("phone").toString();
         //获取验证码
         String code = map.get("code").toString();
-        //从session中获取验证码
+        //验证码比对
         String Incode = session.getAttribute(phone).toString();
-        //比对验证码
         if (code.equals(Incode)) {
-            //判断是否为新用户
+            //判读是否为新用户
             LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-            lambdaQueryWrapper.eq(User::getPhone,phone);
+            lambdaQueryWrapper.eq(User::getPhone, phone);
             User one = userService.getOne(lambdaQueryWrapper);
             if (one == null) {
-                one.setPhone(user.getPhone());
+                one.setPhone(phone);
+                one.setStatus(1);
                 userService.save(one);
             }
-
             return R.success("登录成功");
         }
-
-
+        log.info("sa");
         return R.error("登录失败");
     }
 }
