@@ -32,7 +32,7 @@ public class UserController {
             //生成验证码
             String code = ValidateCodeUtils.generateValidateCode(4).toString();
             //发送验证码
-            log.info(code);
+            log.info("验证码："+code);
             SMSUtils.sendMessage("验证码短信","SMS_251115011",phone,code);
             session.setAttribute(phone, code);
             return R.success("验证码发送成功");

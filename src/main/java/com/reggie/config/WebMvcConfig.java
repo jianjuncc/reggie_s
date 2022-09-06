@@ -25,16 +25,24 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
                 "/employee/logout",
                 "http://localhost:8080/backend/page/demo/upload.html",
                 "http://localhost:8080/front/page/login.html",
+                "/category/list",
                 //html静态资源
                 "/**/*.html",
                 "/backend/images/**",
+
+                "/front/images/**",
                 "/backend/plugins/**",
                 "/backend/styles/**",
                 "/backend/page/demo/**",
                 "/front/page/login.html",
                 "/front/page/**.html",
                 "/user/sendMsg",
+                "/user/sendMsg",
                 "/user/login",
+                "/shoppingCart/list",
+                "/category/*",
+                "/setmeal/*",
+                "/dish/*",
                 //js静态资源
                 "/**/*.js",
                 //css静态资源

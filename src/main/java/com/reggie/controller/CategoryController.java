@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.reggie.common.R;
 import com.reggie.entity.Category;
-import com.reggie.service.impl.CategoryServiceImpl;
+import com.reggie.entity.Setmeal;
+import com.reggie.service.CategoryService;
+import com.reggie.service.SetmealService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +23,10 @@ import java.util.List;
 @Slf4j
 public class CategoryController {
     @Resource
-    CategoryServiceImpl service;
+    CategoryService service;
+
+    @Resource
+    SetmealService setmealService;
 
     /***
      * 分页查询
