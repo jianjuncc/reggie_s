@@ -15,41 +15,44 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 @Slf4j
 @Configuration
 public class WebMvcConfig extends WebMvcConfigurationSupport {
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        InterceptorRegistration registration = registry.addInterceptor(new MainInterceptor());
-        registration.addPathPatterns("/**");
-        registration.excludePathPatterns(
-                //登录路径
-                "/employee/login",
-                "/employee/logout",
-                "http://localhost:8080/backend/page/demo/upload.html",
-                "http://localhost:8080/front/page/login.html",
-                "/category/list",
-                //html静态资源
-                "/**/*.html",
-                "/backend/images/**",
-
-                "/front/images/**",
-                "/backend/plugins/**",
-                "/backend/styles/**",
-                "/backend/page/demo/**",
-                "/front/page/login.html",
-                "/front/page/**.html",
-                "/user/sendMsg",
-                "/user/sendMsg",
-                "/user/login",
-                "/shoppingCart/list",
-                "/category/*",
-                "/setmeal/*",
-                "/dish/*",
-                //js静态资源
-                "/**/*.js",
-                //css静态资源
-                "/**/*.css"
-
-        );
-    }
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//        InterceptorRegistration registration = registry.addInterceptor(new MainInterceptor());
+//        registration.addPathPatterns("/**");
+//        registration.excludePathPatterns(
+//                //登录路径
+//                "/employee/login",
+//                "/employee/logout",
+//                "http://localhost:8080/backend/page/demo/upload.html",
+//                "http://localhost:8080/front/page/login.html",
+//                "/category/list",
+//                //html静态资源
+//                "/**/*.html",
+//                "/backend/images/**",
+//
+//                "/front/images/**",
+//                "/backend/plugins/**",
+//                "/backend/styles/**",
+//                "/backend/page/demo/**",
+//                "/front/page/login.html",
+//                "/front/page/**.html",
+//                "/user/sendMsg",
+//                "/user/sendMsg",
+//                "/user/login",
+//                "/shoppingCart/list",
+//                "/category/*",
+//                "/setmeal/*",
+//                "/dish/*",
+//                //js静态资源
+//                "/**/*.js",
+//                //css静态资源
+//                "/**/*.css",
+//                "/shoppingCart/*",
+//                "/category/*",
+//                "/shoppingCart/list"
+//
+//        );
+//    }
     /***
      * 配置资源映射
      */

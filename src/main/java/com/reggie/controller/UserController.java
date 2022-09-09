@@ -2,6 +2,7 @@ package com.reggie.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.reggie.common.BaseContext;
 import com.reggie.common.R;
 import com.reggie.entity.User;
 import com.reggie.service.UserService;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 
@@ -43,7 +45,7 @@ public class UserController {
 
 
     @PostMapping("/login")
-    public R<String> login(@RequestBody Map map, HttpSession session) {
+    public R<String> login(@RequestBody Map map, HttpServletRequest request,HttpSession session) {
         //获取手机号
         String phone = map.get("phone").toString();
         //获取验证码
@@ -60,9 +62,17 @@ public class UserController {
                 one.setStatus(1);
                 userService.save(one);
             }
+
+            session.setAttribute("user",one.getId());
             return R.success("登录成功");
         }
         log.info("sa");
         return R.error("登录失败");
+    }
+    @PostMapping("/loginout")
+    public R<String> logout(HttpServletRequest request){
+        //清理session中的用户id
+        request.getSession().removeAttribute("user");
+        return R.success("退出成功");
     }
 }

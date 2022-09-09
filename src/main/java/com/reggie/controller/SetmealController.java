@@ -86,6 +86,7 @@ public class SetmealController {
         LambdaQueryWrapper<Setmeal> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(Setmeal::getStatus,setmeal.getStatus());
         lambdaQueryWrapper.eq(Setmeal::getCategoryId,setmeal.getCategoryId());
+
         List<Setmeal> list = setmealService.list(lambdaQueryWrapper);
         return R.success(list);
     }

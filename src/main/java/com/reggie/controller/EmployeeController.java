@@ -3,6 +3,7 @@ package com.reggie.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.reggie.common.BaseContext;
 import com.reggie.common.R;
 import com.reggie.entity.Employee;
 import com.reggie.service.impl.EmployeeServiceImpl;
@@ -61,7 +62,8 @@ public class EmployeeController {
         model.addAttribute("employee", emp.getId());
         httpRequest.getSession().setAttribute("employee", emp.getId());
         httpRequest.getServletContext().setAttribute("employee", emp.getId());
-
+        BaseContext.setThreadLocal(emp.getId());
+        System.out.println(BaseContext.getCurrentId());
         return R.success(emp);
     }
 

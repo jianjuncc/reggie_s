@@ -77,7 +77,11 @@
             <artifactId>fastjson</artifactId>
             <version>2.0.10</version>
         </dependency>
-
+        <dependency>
+            <groupId>io.shardingsphere</groupId>
+            <artifactId>sharding-core</artifactId>
+            <version>3.1.0</version>
+        </dependency>
         <!--页面工具-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

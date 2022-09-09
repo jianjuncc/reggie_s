@@ -7,5 +7,5 @@ import com.reggie.service.OrderService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class OrderImpl extends ServiceImpl<OrderMapper, Orders> implements OrderService {
+public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implements OrderService {
 }
