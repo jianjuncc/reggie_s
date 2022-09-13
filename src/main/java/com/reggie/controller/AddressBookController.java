@@ -1,6 +1,5 @@
 package com.reggie.controller;
 
-import com.alibaba.fastjson2.util.UUIDUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.reggie.common.IdWorker;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
-import java.util.UUID;
 
 
 /**
@@ -87,20 +85,35 @@ public class AddressBookController {
     /**
      * 查询默认地址
      */
+//    @GetMapping("default")
+//    public R<AddressBook> getDefault(HttpSession session) {
+//        LambdaQueryWrapper<AddressBook> queryWrapper = new LambdaQueryWrapper<>();
+//        queryWrapper.eq(AddressBook::getUserId, session.getAttribute("user"));
+//        queryWrapper.eq(AddressBook::getIsDefault, 1);
+//
+//        //SQL:select * from address_book where user_id = ? and is_default = 1
+//        AddressBook addressBook = addressBookService.getOne(queryWrapper);
+//
+//        if (null == addressBook) {
+//            return R.error("没有找到该对象");
+//        } else {
+//            return R.success(addressBook);
+//        }
+//    }
     @GetMapping("default")
     public R<AddressBook> getDefault(HttpSession session) {
-        LambdaQueryWrapper<AddressBook> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(AddressBook::getUserId, session.getAttribute("user"));
-        queryWrapper.eq(AddressBook::getIsDefault, 1);
+
+        LambdaQueryWrapper<AddressBook> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(AddressBook::getUserId, session.getAttribute("user"));
+        //is_default为1表示默认地址
+        lambdaQueryWrapper.eq(AddressBook::getIsDefault, 1);
 
         //SQL:select * from address_book where user_id = ? and is_default = 1
-        AddressBook addressBook = addressBookService.getOne(queryWrapper);
-
-        if (null == addressBook) {
-            return R.error("没有找到该对象");
-        } else {
-            return R.success(addressBook);
+        AddressBook addressBook = addressBookService.getOne(lambdaQueryWrapper);
+        if (addressBook == null) {
+            return R.error("没有查到相关信息");
         }
+        return R.success(addressBook);
     }
 
     /**

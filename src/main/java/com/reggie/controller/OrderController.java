@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.reggie.common.BaseContext;
 import com.reggie.common.R;
+import com.reggie.entity.AddressBook;
 import com.reggie.entity.OrderDetail;
 import com.reggie.entity.Orders;
 import com.reggie.entity.ShoppingCart;
@@ -46,12 +47,9 @@ public class OrderController {
     }
     /**
      * 用户订单分页查询
-     * @param page
-     * @param pageSize
-     * @return
      */
     @GetMapping("/userPage")
-    public R<Page> page(int page, int pageSize){
+    public R<Page<Orders>> page(int page, int pageSize){
 
         //分页构造器对象
         Page<Orders> pageInfo = new Page<>(page,pageSize);
@@ -65,6 +63,13 @@ public class OrderController {
         return R.success(pageInfo);
     }
 
+    //下单
+    @PostMapping("submit")
+    public R submit(@RequestBody Orders orders){
+        log.info("订单相关信息："+orders);
+        orderService.submit(orders);
+        return null;
+    }
     //客户端点击再来一单
     /**
      * 前端点击再来一单是直接跳转到购物车的，所以为了避免数据有问题，再跳转之前我们需要把购物车的数据给清除
